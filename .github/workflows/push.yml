@@ -35,10 +35,12 @@ jobs:
           sync-status: true
           inputs: |
             {
-              "origin_repo_project": "${{ vars.REPO_PROJECT }}",
-              "origin_sha": "${{ github.sha }}"
+              "origin_repository": "${{ github.repository }}",
+              "origin_sha": "${{ github.sha }}",
+              "origin_run_id": "${{ github.run_id }}"
             }
 
       - name: Display notice
+        if: always()
         run: |
           echo "::notice::The Build workflow was delegated to the main repository. See details at ${{ steps.delegation.outputs.runUrlHtml }}"

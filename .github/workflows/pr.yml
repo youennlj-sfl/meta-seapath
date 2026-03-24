@@ -29,11 +29,13 @@ jobs:
           sync-status: true
           inputs: |
             {
-              "origin_repo_project": "${{ vars.REPO_PROJECT }}",
+              "origin_repository": "${{ github.repository }}",
               "origin_sha": "${{ github.sha }}",
-              "origin_pr_name": "${{ github.repository }}#${{ github.event.pull_request.number }}"
+              "origin_run_id": "${{ github.run_id }}",
+              "origin_pr_number": "${{ github.event.pull_request.number }}"
             }
 
       - name: Display notice
+        if: always()
         run: |
           echo "::notice::The Pull Request workflow was delegated to the main repository. See details at ${{ steps.delegation.outputs.runUrlHtml }}"
