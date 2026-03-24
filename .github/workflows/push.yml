@@ -29,7 +29,7 @@ jobs:
           repo: ${{ vars.MAIN_REPO }}
           # the branch names are the same between this repo and the main one
           ref: ${{ github.ref_name }}
-          token: ${{ secrets.MAIN_REPO_TOKEN }}
+          token: ${{ secrets.YOCTO_CICD_TOKEN }}
           wait-for-completion: true
           wait-timeout-seconds: 21600 # 6 hours
           sync-status: true
