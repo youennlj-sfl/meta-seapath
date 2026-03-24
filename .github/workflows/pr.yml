@@ -1,0 +1,39 @@
+name: Pull Requests
+
+on:
+  pull_request:
+    branches:
+      - scarthgap
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  delegate-main-repo:
+    name: Delegate to the main repository
+    # See detailed explanations in push.yml
+    runs-on: ["ubuntu-slim"]
+    steps:
+      - name: Invoke the PR workflow
+        id: delegation
+        uses: benc-uk/workflow-dispatch@70455941930e5212314c10c0e38ec94986096618
+        with:
+          workflow: pr.yml
+          repo: "${{ vars.MAIN_REPO }}"
+          # the branch names are the same between this repo and the main one
+          ref: "${{ github.base_ref }}"
+          token: "${{ secrets.MAIN_REPO_TOKEN }}"
+          wait-for-completion: true
+          wait-timeout-seconds: 21600 # 6 hours
+          sync-status: true
+          inputs: |
+            {
+              "origin_repo_project": "${{ vars.REPO_PROJECT }}",
+              "origin_sha": "${{ github.sha }}",
+              "origin_pr_name": "${{ github.repository }}#${{ github.event.pull_request.number }}"
+            }
+
+      - name: Display notice
+        run: |
+          echo "::notice::The Pull Request workflow was delegated to the main repository. See details at ${{ steps.delegation.outputs.runUrlHtml }}"
