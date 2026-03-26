@@ -15,6 +15,15 @@ jobs:
     # See detailed explanations in push.yml
     runs-on: ["ubuntu-slim"]
     steps:
+      - name: Create a token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-actions: write
+
       - name: Invoke the PR workflow
         id: delegation
         uses: benc-uk/workflow-dispatch@70455941930e5212314c10c0e38ec94986096618
@@ -23,7 +32,7 @@ jobs:
           repo: "${{ vars.MAIN_REPO }}"
           # the branch names are the same between this repo and the main one
           ref: "${{ github.base_ref }}"
-          token: "${{ secrets.YOCTO_CICD_TOKEN }}"
+          token: "${{ steps.app-token.outputs.token }}"
           wait-for-completion: true
           wait-timeout-seconds: 21600 # 6 hours
           sync-status: true
