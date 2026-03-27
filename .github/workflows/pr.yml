@@ -1,7 +1,18 @@
 name: Pull Requests
 
 on:
-  pull_request:
+  # With the"pull_request" trigger, workflows triggered by PRs made from forks
+  # are executed in a "safe" context without access to secrets.
+  # We use the "_target" variant since we need the secret necessary to dispatch
+  # the workflow on the main repo.
+  # We are not checking out any user code in this workflow so there is no
+  # security risk here.
+  # However, the dispatched workflow on the main repo will checkout the PR code
+  # in a context with secrets and potentially with a write-enabeld token so
+  # extra care should be taken there.
+  # The workflow is only ran after approval of the PR by maintainers so it
+  # already mitigates most security issues.
+  pull_request_target:
     branches:
       - scarthgap
     types:
